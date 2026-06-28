@@ -65,6 +65,10 @@
           "position": 5
         },
         {
+          "name": "nix-mineral.kernel-modules",
+          "position": 6
+        },
+        {
           "depth": 2,
           "name": {
             "regex": "^nix-mineral\\.filesystems\\..*"
@@ -72,16 +76,23 @@
           "position": 10
         },
         {
+          "depth": 2,
           "name": {
-            "regex": "^nix-mineral\\.settings\\..*"
+            "regex": "^nix-mineral\\.kernel-modules\\..*"
           },
           "position": 20
         },
         {
           "name": {
-            "regex": "^nix-mineral\\.extras\\..*"
+            "regex": "^nix-mineral\\.settings\\..*"
           },
           "position": 30
+        },
+        {
+          "name": {
+            "regex": "^nix-mineral\\.extras\\..*"
+          },
+          "position": 40
         }
       ],
       "ordering": "custom"

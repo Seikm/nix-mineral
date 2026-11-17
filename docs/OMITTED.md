@@ -64,7 +64,7 @@ which is not default behavior!) \
 
 ## Sections from madaidan's guide requiring manual user intervention:
 2.4 (Excluded due to significant breakage and trivial bypasses during typical usage. See:
-    https://github.com/secureblue/secureblue/issues/101, https://github.com/systemd/systemd/issues/29893)
+    https://github.com/secureblue/secureblue/issues/101, https://github.com/systemd/systemd/issues/29893) \
 2.7 (systemd service hardening must be done manually) \
 2.9 (Paid software) \
 2.11 (Unique for all hardware, inconvenient) \

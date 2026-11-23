@@ -46,7 +46,7 @@
 
   config = l.mkIf (!cfg) {
     boot.kernel.sysctl = {
-      "net.mptcp.enabled" = l.mkDefault "1";
+      "net.mptcp.enabled" = l.mkDefault "0";
     };
   };
 }

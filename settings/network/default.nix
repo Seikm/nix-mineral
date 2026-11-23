@@ -34,6 +34,7 @@ let
         ./ipv6-tempaddr.nix
         ./log-martians.nix
         ./max-addresses.nix
+        ./mptcp.nix
         ./neighbor-solicitations.nix
         ./router-advertisements.nix
         ./router-solicitations.nix

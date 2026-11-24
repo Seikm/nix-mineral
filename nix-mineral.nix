@@ -23,109 +23,38 @@
   ...
 }:
 let
-  cfg = config.nix-mineral;
-
-  settingsModules =
-    l.mkCategoryModules cfg.settings
-      [
-        ./settings/kernel
-        ./settings/system
-        ./settings/network
-        ./settings/entropy
-        ./settings/debug
-        ./settings/etc
-        ./settings/pam
-        ./settings/misc
-      ]
-      {
-        inherit
-          options
-          config
-          pkgs
-          lib
-          ;
-      };
-
-  extrasModules =
-    l.mkCategoryModules cfg.extras
-      [
-        ./extras/kernel
-        ./extras/system
-        ./extras/network
-        ./extras/entropy
-        ./extras/misc
-        ./extras/tmpfiles
-        ./extras/etc
-      ]
-      {
-        inherit
-          options
-          config
-          pkgs
-          lib
-          ;
-      };
-
-  filesystemsModules =
-    l.mkCategoryModules cfg.filesystems
-      [
-        ./filesystems/normal.nix
-        ./filesystems/special.nix
-      ]
-      {
-        inherit
-          options
-          config
-          pkgs
-          lib
-          ;
-      };
-
-  kmodulesModules =
-    l.mkCategoryModules cfg.kernel-modules
-      [
-        ./kernel-modules/load.nix
-        ./kernel-modules/disable.nix
-        ./kernel-modules/blacklist.nix
-      ]
-      {
-        inherit
-          options
-          config
-          pkgs
-          lib
-          ;
-      };
+  args = {
+    inherit
+      options
+      config
+      pkgs
+      lib
+      ;
+  };
 in
 {
   imports = [
     (l.importModule ./presets { })
   ]
-  ++ (l.mkCategoryImports settingsModules)
-  ++ (l.mkCategoryImports extrasModules)
-  ++ (l.mkCategoryImports filesystemsModules)
-  ++ (l.mkCategoryImports kmodulesModules);
+  ++ (l.mkCategoryModules {
+    path = ./settings;
+    inherit config args;
+  })
+  ++ (l.mkCategoryModules {
+    path = ./extras;
+    inherit config args;
+  })
+  ++ (l.mkCategoryModules {
+    path = ./filesystems;
+    inherit config args;
+  })
+  ++ (l.mkCategoryModules {
+    path = ./kernel-modules;
+    ignore = [
+      ./kernel-modules/combos
+    ];
+    inherit config args;
+  });
 
-  options = {
-    nix-mineral = {
-      enable = l.mkEnableOption "the nix-mineral module";
-
-      settings = l.mkCategoryOptions settingsModules;
-
-      extras = l.mkCategoryOptions extrasModules;
-
-      filesystems = l.mkCategoryOptions filesystemsModules;
-
-      kernel-modules = l.mkCategoryOptions kmodulesModules;
-    };
-  };
-
-  config = l.mkIf cfg.enable (
-    l.mkMerge [
-      (l.mkCategoryConfig settingsModules)
-      (l.mkCategoryConfig extrasModules)
-      (l.mkCategoryConfig filesystemsModules)
-      (l.mkCategoryConfig kmodulesModules)
-    ]
-  );
+  options.nix-mineral.enable = l.mkEnableOption "the nix-mineral module";
 }

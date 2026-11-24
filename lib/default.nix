@@ -133,11 +133,7 @@ let
                   mkDeprecatedOption
                   mkDeprecatedOptionModule
                   importModule
-                  importCategoryModule
                   mkCategoryModules
-                  mkCategoryOptions
-                  mkCategoryConfig
-                  mkCategoryImports
                   mkFilesystemOptions
                   ;
               };
@@ -164,24 +160,6 @@ let
       );
     in
     l.mkIf (finalOptions != [ ]) finalOptions;
-
-  # import a module using `importModule` and adds the args `parentCfg` and `cfg` to the module
-  # `categoryConfig` is the config for the category the module belongs to, ex: config.nix-mineral.settings.kernel
-  # `path` is the path to the module, ex: ./a-kernel-module.nix
-  # `args` are the default arguments to pass to the module, needs to be: { inherit options config pkgs lib; }
-  # ---
-  # `parentCfg` is just the `categoryConfig` passed to the module
-  # `cfg` is the child of parentCfg that has the base name of the path (without the .nix extension if any)
-  importCategoryModule =
-    categoryConfig: path: args:
-    (importModule path {
-      # pass the category config to the module
-      parentCfg = categoryConfig;
-      # pass the path base name as a config attribute
-      # remove .nix extension if present
-      cfg = categoryConfig.${l.removeSuffix ".nix" (l.baseNameOf path)};
-    })
-      args;
 
   # recursively import a entire category of modules from a path, and return a list of modules to be imported with `imports`
   # `config` has to be the config attribute from nixpkgs
@@ -241,35 +219,6 @@ let
         }
       )
     ) rawFilesetModules;
-
-  # create an attrset with all options from a list of categoryModules created with `mkCategoryModules`
-  mkCategoryOptions =
-    modules:
-    l.mergeAttrsList (l.map (module: if module ? options then module.options else { }) modules);
-
-  # create a config for a list of categoryModules created with `mkCategoryModules`
-  # use this to define a `config = ...` attrset
-  mkCategoryConfig =
-    modules: (l.mkMerge (l.map (module: if module ? config then module.config else { }) modules));
-
-  # create a list of imports for a list of categoryModules created with `mkCategoryModules
-  # this uses `importModule` to import the modules, so it will pass the `l` variable to every module
-  # use this to define an `imports = ...` attrset
-  mkCategoryImports =
-    modules:
-    l.concatMap (
-      module:
-      if module ? imports then
-        (l.map (
-          moduleImport:
-          if l.typeOf moduleImport == "path" || l.typeOf moduleImport == "lambda" then
-            importModule moduleImport { }
-          else
-            moduleImport
-        ) module.imports)
-      else
-        [ ]
-    ) modules;
 in
 {
   flake.lib = {
@@ -280,11 +229,7 @@ in
       mkDeprecatedOption
       mkDeprecatedOptionModule
       importModule
-      importCategoryModule
       mkCategoryModules
-      mkCategoryOptions
-      mkCategoryConfig
-      mkCategoryImports
       ;
   };
 }

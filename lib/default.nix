@@ -107,34 +107,44 @@ let
         pkgs,
         ...
       }:
-      ((if lib.typeOf module == "path" then import module else module) (
-        {
-          inherit
-            lib
-            config
-            options
-            pkgs
-            ;
-          l = l // {
-            # ugly, dont know another way to do this
-            inherit
-              sources
-              fetchGhFile
-              mkBoolOption
-              mkDeprecatedOption
-              mkDeprecatedOptionModule
-              importModule
-              importCategoryModule
-              mkCategoryModules
-              mkCategoryOptions
-              mkCategoryConfig
-              mkCategoryImports
-              mkFilesystemOptions
-              ;
-          };
-        }
-        // extraArgs
-      ))
+      (
+        (
+          if lib.typeOf module == "path" then
+            import module
+          else if lib.typeOf module == "string" then
+            import module
+          else
+            module
+        )
+          (
+            {
+              inherit
+                lib
+                config
+                options
+                pkgs
+                ;
+              l = l // {
+                # ugly, dont know another way to do this
+                inherit
+                  sources
+                  fetchGhFile
+                  mkBoolOption
+                  mkDeprecatedOption
+                  mkDeprecatedOptionModule
+                  importModule
+                  importCategoryModule
+                  mkCategoryModules
+                  mkCategoryOptions
+                  mkCategoryConfig
+                  mkCategoryImports
+                  mkFilesystemOptions
+                  ;
+              };
+            }
+            // extraArgs
+          )
+      )
     );
 
   # Converts a declarative attrset of filesystem options into a valid list.

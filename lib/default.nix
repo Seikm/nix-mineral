@@ -116,30 +116,30 @@ let
           else
             module
         )
-          (
-            {
+        (
+          {
+            inherit
+              lib
+              config
+              options
+              pkgs
+              ;
+            l = l // {
+              # ugly, dont know another way to do this
               inherit
-                lib
-                config
-                options
-                pkgs
+                sources
+                fetchGhFile
+                mkBoolOption
+                mkDeprecatedOption
+                mkDeprecatedOptionModule
+                importModule
+                mkCategoryModules
+                mkFilesystemOptions
                 ;
-              l = l // {
-                # ugly, dont know another way to do this
-                inherit
-                  sources
-                  fetchGhFile
-                  mkBoolOption
-                  mkDeprecatedOption
-                  mkDeprecatedOptionModule
-                  importModule
-                  mkCategoryModules
-                  mkFilesystemOptions
-                  ;
-              };
-            }
-            // extraArgs
-          )
+            };
+          }
+          // extraArgs
+        )
       )
     );
 

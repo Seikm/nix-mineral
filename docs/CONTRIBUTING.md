@@ -182,9 +182,9 @@ Example:
    Enter the folder for your chosen module type, and choose a category to place your module in (or [create a new one](#creating-a-category) if needed).
 
 3. Create the module file:
-   Let's say I want to create a `settings` module in the `system` category. Here's what the process would look like:
-
-First, I create a file `example-module.nix` inside the `system` folder with this:
+   Let's say I want to create a `settings` module in the `system` category:
+   I just have to create a file with the name of the module you want to create,
+   for example `example-module.nix`, and place it inside the `settings/system` folder.
 
 ```nix
 {
@@ -221,14 +221,10 @@ First, I create a file `example-module.nix` inside the `system` folder with this
 }
 ```
 
-4. Import the module:
-   Inside the `system` folder, there is a file with the name `default.nix`, which imports all modules within that category.
-   You just need to add the relative file path to the `categoryModules` list inside the `settings/system/default.nix` file.
-
-5. Examples of different modules:
+4. Examples of different modules:
    `settings/system/multilib.nix`: A simple module.
-   `settings/kernel/cpu-mitigations.nix`: A module that uses an enum instead of a bool.
-   `extras/misc/usbguard.nix`: A module with several options.
+   `settings/system/yama.nix`: A module that uses an enum instead of a bool.
+   `settings/network/icmp.nix`: A module with several options.
 
 # Deprecate a module
 
@@ -302,51 +298,8 @@ Complete example of a deprecated module:
    `extras`: Extra settings, which modify things only if specified by the user, and may contain opinionated additional software.
 
 2. Create a folder with the category name within the chosen module type:
+   The category is created automatically when a folder is created, all modules within the folder are placed into this category.
    Example: `settings/new-category`
-
-3. Create a `default.nix` file inside the category folder:
-   Example: `settings/new-category/default.nix`
-   Place the following code inside the file, adapting the name, description, and the modules you want to add:
-
-```nix
-{
-  options,
-  config,
-  pkgs,
-  lib,
-  l,
-  cfg,
-  ...
-}:
-
-let
-  categoryModules =
-    l.mkCategoryModules cfg
-      [
-        # Add here the relative paths to the modules within this category
-        ./example-module.nix
-      ]
-      {
-        inherit
-          options
-          config
-          pkgs
-          lib
-          ;
-      };
-in
-{
-  imports = l.mkCategoryImports categoryModules;
-
-  options.new-category = l.mkCategoryOptions categoryModules;
-
-  config = l.mkCategoryConfig categoryModules;
-}
-```
-
-4. Import the category:
-   Within the `nix-mineral.nix` file, import the category by adding the relative path of the category folder to the `settingsModules` or `extrasModules` list, depending on the type of category you created.
-   Example: `settings/new-category` would be imported within the `settingsModules` list in the `nix-mineral.nix` file.
 
 # Hardening a filesystem
 
